@@ -303,7 +303,7 @@ export function HealthInsurancePage() {
   const filteredOptions = useMemo(() => options.filter((option) => {
     if (selectedType !== 'all' && option.type !== selectedType) return false;
     if (numericAge !== null && option.type === 'critical' && !isCriticalAgeEligible(numericAge)) return false;
-    if (budget !== '' && (option.annualPremium === null || option.annualPremium > budget)) return false;
+    if (budget !== '' && option.annualPremium !== null && option.annualPremium > budget) return false;
     if (
       minimumCover !== '' &&
       (option.verifiedCoverMax === null || option.verifiedCoverMax < minimumCover)
@@ -330,8 +330,10 @@ export function HealthInsurancePage() {
     }
 
     messages.push('Your profile does not include household members; compare individual and family options based on the people you intend to insure.');
-    if (budget === '') {
-      messages.push('Set a maximum annual premium to filter options when verified premium information becomes available.');
+    if (budget !== '') {
+      messages.push('Options with a verified annual premium above your budget are hidden. Options without a verified quote remain visible; request an official quote to check their price.');
+    } else {
+      messages.push('Set a maximum annual premium to hide options with verified quotes above your budget. Options without a verified quote remain visible.');
     }
     return messages;
   }, [budget, numericAge, profileConditions, profileLoaded]);
@@ -422,27 +424,24 @@ export function HealthInsurancePage() {
                   setSaved(false);
                 }}
               />
-              <small className="text-muted">Options without a verified quote cannot match this filter.</small>
+              <small className="text-muted">Unpriced options stay visible; only verified quotes above your budget are hidden.</small>
             </div>
             <div className="col-12 col-md-6 col-xl-3">
               <label className="form-label small fw-semibold" htmlFor="insurance-coverage">Minimum verified cover (₹)</label>
-              <select
-                className="form-select"
+              <input
+                className="form-control"
                 id="insurance-coverage"
+                type="number"
+                min="0"
+                step="50000"
                 value={minimumCover}
+                placeholder="Any cover"
                 onChange={(event) => {
-                  setMinimumCover(event.target.value === '' ? '' : Number(event.target.value));
+                  setMinimumCover(event.target.value === '' ? '' : Math.max(0, Number(event.target.value)));
                   setSaved(false);
                 }}
-              >
-                <option value="">Any cover</option>
-                <option value="500000">₹5 lakh</option>
-                <option value="1000000">₹10 lakh</option>
-                <option value="2500000">₹25 lakh</option>
-                <option value="5000000">₹50 lakh</option>
-                <option value="10000000">₹1 crore</option>
-              </select>
-              <small className="text-muted">Unpublished limits are not assumed.</small>
+              />
+              <small className="text-muted">Enter any amount to show matching verified cover options. Unpublished limits are not assumed.</small>
             </div>
             <div className="col-12 col-md-6 col-xl-3">
               <label className="form-label small fw-semibold" htmlFor="insurance-type">Insurance type</label>
@@ -469,8 +468,8 @@ export function HealthInsurancePage() {
         <div className="card border-0 shadow-sm">
           <div className="card-body text-center text-muted py-5">
             <ShieldCheck size={38} className="mb-2 opacity-50" />
-            <p className="mb-1 fw-semibold">No options match these filters with currently verified data.</p>
-            <p className="small mb-0">Clear the budget or coverage filter to see categories with provider-specific details pending verification.</p>
+            <p className="mb-1 fw-semibold">No options match the selected type, age, and verified coverage filters.</p>
+            <p className="small mb-0">Try changing the insurance type or clearing the coverage filter.</p>
           </div>
         </div>
       ) : (

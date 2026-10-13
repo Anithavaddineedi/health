@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
+  Bar,
+  BarChart,
   CartesianGrid,
   Legend,
-  Line,
-  LineChart,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -297,15 +297,15 @@ export function HealthTrendsPage() {
           ) : (
             <>
               <div className="small text-muted mb-2">
-                Separate Y-axes:
-                <span className="ms-2" style={{ color: metricColors.bloodPressure }}>Left: Blood Pressure (mmHg)</span>
-                <span className="ms-2" style={{ color: metricColors.bloodSugar }}>Right: Blood Sugar (mg/dL)</span>
-                <span className="ms-2" style={{ color: metricColors.hemoglobin }}>Inner right: Hemoglobin (g/dL)</span>
-                {' '}Missing readings are left blank.
+                Bar chart view:
+                <span className="ms-2" style={{ color: metricColors.bloodPressure }}>Blood Pressure (mmHg)</span>
+                <span className="ms-2" style={{ color: metricColors.bloodSugar }}>Blood Sugar (mg/dL)</span>
+                <span className="ms-2" style={{ color: metricColors.hemoglobin }}>Hemoglobin (g/dL)</span>
+                {' '}Each bar represents the latest saved reading for that date.
               </div>
               <div style={{ width: '100%', height: 390 }}>
                 <ResponsiveContainer>
-                  <LineChart data={chartData} margin={{ top: 12, right: 60, left: 4, bottom: 12 }}>
+                  <BarChart data={chartData} margin={{ top: 12, right: 56, left: 8, bottom: 12 }}>
                     <CartesianGrid stroke="#e8efea" vertical={false} />
                     <XAxis
                       dataKey="timestamp"
@@ -354,50 +354,38 @@ export function HealthTrendsPage() {
                         </span>
                       )}
                     />
-                    <Line
+                    <Bar
                       name="bloodPressure"
-                      type="monotone"
                       dataKey="bloodPressure"
                       yAxisId="pressure"
-                      stroke={metricColors.bloodPressure}
-                      strokeWidth={2.5}
-                      dot={{ r: 3, fill: metricColors.bloodPressure }}
-                      activeDot={{ r: 5 }}
-                      connectNulls={false}
-                      isAnimationActive={false}
+                      fill={metricColors.bloodPressure}
+                      radius={[6, 6, 0, 0]}
+                      maxBarSize={20}
                     />
-                    <Line
+                    <Bar
                       name="bloodSugar"
-                      type="monotone"
                       dataKey="bloodSugar"
                       yAxisId="sugar"
-                      stroke={metricColors.bloodSugar}
-                      strokeWidth={2.5}
-                      dot={{ r: 3, fill: metricColors.bloodSugar }}
-                      activeDot={{ r: 5 }}
-                      connectNulls={false}
-                      isAnimationActive={false}
+                      fill={metricColors.bloodSugar}
+                      radius={[6, 6, 0, 0]}
+                      maxBarSize={20}
                     />
-                    <Line
+                    <Bar
                       name="hemoglobin"
-                      type="monotone"
                       dataKey="hemoglobin"
                       yAxisId="hemoglobin"
-                      stroke={metricColors.hemoglobin}
-                      strokeWidth={2.5}
-                      dot={{ r: 3, fill: metricColors.hemoglobin }}
-                      activeDot={{ r: 5 }}
-                      connectNulls={false}
-                      isAnimationActive={false}
+                      fill={metricColors.hemoglobin}
+                      radius={[6, 6, 0, 0]}
+                      maxBarSize={20}
                     />
-                  </LineChart>
+                  </BarChart>
                 </ResponsiveContainer>
               </div>
               <div className="small text-muted mt-2">
                 Blood pressure charts the systolic value; tooltips retain the full reading when available.
                 When a date has multiple readings for the same metric, the latest saved reading is plotted.
-                Records without a clinical date use their saved date. Increase or decrease trends become visible
-                when readings are available from multiple dates.
+                Records without a clinical date use their saved date. Use the chart to compare blood pressure,
+                sugar, and hemoglobin across the selected period.
               </div>
             </>
           )}

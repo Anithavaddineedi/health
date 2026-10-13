@@ -5,6 +5,10 @@ export function Disclaimer({ variant = 'full' }: { variant?: 'full' | 'compact' 
   const { t } = useLang();
 
   if (variant === 'compact') {
+    if (!t.disclaimerCompact?.trim()) {
+      return null;
+    }
+
     return (
       <div className="alert alert-warning py-2 px-3 d-flex align-items-center gap-2 small">
         <AlertTriangle size={16} className="flex-shrink-0" />
