@@ -9,38 +9,44 @@ body {
   min-width: 320px;
   min-height: 100vh;
   font-family: 'Inter', 'Aptos', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  color: #20342e;
-  background: #f3f7f4;
+  color: #20383b;
+  background:
+    radial-gradient(ellipse at 8% 8%, rgba(194, 235, 226, 0.58), transparent 34rem),
+    radial-gradient(ellipse at 94% 84%, rgba(212, 230, 247, 0.48), transparent 32rem),
+    #f2f8f7;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
 
 :root {
-  --health-primary: #16735b;
-  --health-primary-dark: #104d40;
-  --health-primary-light: #42a786;
-  --health-accent: #e6a77a;
-  --health-bg: #f3f7f4;
+  --health-primary: #087f8c;
+  --health-primary-dark: #07545b;
+  --health-primary-light: #42b9ad;
+  --health-accent: #f0a56a;
+  --health-bg: #f2f8f7;
   --health-card-bg: #fff;
   --health-danger: #b94d58;
-  --health-warning: #d9a23d;
-  --health-info: #477f92;
-  --health-ink: #20342e;
-  --health-muted: #72837b;
-  --health-line: #e5ede7;
-  --health-shadow: 0 12px 34px rgba(29, 69, 52, 0.075);
+  --health-warning: #d99732;
+  --health-info: #477f9c;
+  --health-ink: #20383b;
+  --health-muted: #71868a;
+  --health-line: #dfebea;
+  --health-shadow: 0 12px 34px rgba(24, 73, 76, 0.075);
 }
 
 ::selection {
   color: #fff;
-  background: #16735b;
+  background: #087f8c;
 }
 
 .login-page {
   overflow: hidden;
   background:
-    radial-gradient(ellipse at 18% 16%, rgba(212, 235, 222, 0.78), transparent 31rem),
-    #f3f7f4;
+    radial-gradient(ellipse at 12% 12%, rgba(173, 231, 215, 0.76), transparent 32rem),
+    radial-gradient(ellipse at 92% 88%, rgba(191, 221, 241, 0.68), transparent 30rem),
+    linear-gradient(135deg, #f4fbf9, #edf7f5 48%, #f1f6fb);
+  background-size: 140% 140%;
+  animation: health-background-drift 22s ease-in-out infinite alternate;
 }
 
 .login-layout {
@@ -48,10 +54,11 @@ body {
   grid-template-columns: minmax(0, 1.08fr) minmax(360px, 0.82fr);
   width: min(1120px, 100%);
   overflow: hidden;
-  border: 1px solid rgba(225, 235, 228, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.9);
   border-radius: 28px;
   background: rgba(255, 255, 255, 0.72);
-  box-shadow: 0 28px 90px rgba(29, 69, 52, 0.12);
+  box-shadow: 0 28px 90px rgba(24, 73, 76, 0.14), 0 3px 12px rgba(28, 121, 121, 0.06);
+  animation: health-card-enter 650ms cubic-bezier(0.2, 0.75, 0.3, 1) both;
 }
 
 .login-visual {
@@ -62,7 +69,7 @@ body {
   justify-content: space-between;
   overflow: hidden;
   padding: 1.5rem;
-  background: linear-gradient(145deg, #eaf6ef 0%, #f6faf6 56%, #deefe4 100%);
+  background: linear-gradient(145deg, #dcf3eb 0%, #f3faf8 50%, #dcecf5 100%);
 }
 
 .login-illustration {
@@ -73,6 +80,7 @@ body {
   object-fit: contain;
   object-position: center 40%;
   padding: 1rem;
+  animation: health-illustration-float 8s ease-in-out infinite;
 }
 
 .login-visual-copy {
@@ -84,12 +92,12 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.72);
   border-radius: 20px;
   background: rgba(248, 252, 249, 0.84);
-  box-shadow: 0 12px 35px rgba(29, 69, 52, 0.08);
+  box-shadow: 0 12px 35px rgba(24, 73, 76, 0.09);
   backdrop-filter: blur(12px);
 }
 
 .login-visual-eyebrow {
-  color: #16735b;
+  color: #087f8c;
   font-size: 0.7rem;
   font-weight: 750;
   letter-spacing: 0.14em;
@@ -97,7 +105,7 @@ body {
 
 .login-visual-copy h2 {
   margin: 0.55rem 0;
-  color: #104d40;
+  color: #07545b;
   font-size: clamp(1.65rem, 3vw, 2.2rem);
   font-weight: 750;
   letter-spacing: -0.05em;
@@ -107,7 +115,7 @@ body {
 .login-visual-copy p {
   max-width: 360px;
   margin: 0;
-  color: #63786d;
+  color: #617b7c;
   font-size: 0.92rem;
   line-height: 1.55;
 }
@@ -117,8 +125,64 @@ body {
   margin: 1.5rem;
   border: 0 !important;
   border-radius: 22px;
-  background: #fff;
-  box-shadow: 0 14px 45px rgba(29, 69, 52, 0.07) !important;
+  background: linear-gradient(160deg, #fff 0%, #fbfefc 100%);
+  box-shadow: 0 14px 45px rgba(24, 73, 76, 0.09) !important;
+  transition: box-shadow 220ms ease, transform 220ms ease;
+}
+
+.login-card .rounded-circle {
+  background: linear-gradient(145deg, #35b7a2, #087f8c) !important;
+  box-shadow: 0 9px 22px rgba(8, 127, 140, 0.25);
+  animation: health-logo-breathe 4s ease-in-out infinite;
+}
+
+.login-card .form-control,
+.login-card .input-group-text {
+  border-color: #dce9e7;
+  background-color: #f7fbfa !important;
+  transition: border-color 180ms ease, box-shadow 180ms ease, background-color 180ms ease;
+}
+
+.login-card .form-control:focus {
+  border-color: #49b7a8;
+  background-color: #fff !important;
+  box-shadow: 0 0 0 0.22rem rgba(44, 166, 157, 0.16);
+}
+
+.login-card .btn-success,
+.health-page-container .btn-success,
+.btn-success {
+  --bs-btn-bg: #087f8c;
+  --bs-btn-border-color: #087f8c;
+  --bs-btn-hover-bg: #07545b;
+  --bs-btn-hover-border-color: #07545b;
+  --bs-btn-active-bg: #07545b;
+  --bs-btn-active-border-color: #07545b;
+  --bs-btn-disabled-bg: #087f8c;
+  --bs-btn-disabled-border-color: #087f8c;
+  background-image: linear-gradient(115deg, #159e91, #08727e);
+  box-shadow: 0 6px 16px rgba(8, 127, 140, 0.18);
+  transition: transform 180ms ease, box-shadow 180ms ease, filter 180ms ease;
+}
+
+.login-card .btn-success:hover,
+.health-page-container .btn-success:hover,
+.btn-success:not(:disabled):hover {
+  filter: saturate(1.08) brightness(1.03);
+  box-shadow: 0 9px 21px rgba(8, 127, 140, 0.25);
+  transform: translateY(-1px);
+}
+
+.login-card .btn-outline-secondary {
+  border-color: #dbe7e6;
+  border-radius: 11px;
+  transition: border-color 180ms ease, background-color 180ms ease, transform 180ms ease;
+}
+
+.login-card .btn-outline-secondary:hover {
+  border-color: #a9d4ce;
+  background-color: #eff9f7;
+  transform: translateY(-1px);
 }
 
 @media (max-width: 767.98px) {
@@ -174,8 +238,11 @@ body {
 .health-shell {
   color: var(--health-ink);
   background:
-    radial-gradient(ellipse at 90% 0%, rgba(216, 237, 225, 0.62), transparent 36rem),
-    var(--health-bg) !important;
+    radial-gradient(ellipse at 90% 0%, rgba(191, 234, 219, 0.72), transparent 36rem),
+    radial-gradient(ellipse at 0% 80%, rgba(210, 229, 247, 0.56), transparent 33rem),
+    linear-gradient(145deg, #f3faf8, #eff7f5 55%, #f2f6fa) !important;
+  background-size: 130% 130% !important;
+  animation: health-background-drift 26s ease-in-out infinite alternate;
 }
 
 .health-page-container {
@@ -194,15 +261,17 @@ body {
 }
 
 .card {
-  border: 1px solid rgba(225, 235, 228, 0.88) !important;
+  border: 1px solid rgba(220, 234, 231, 0.9) !important;
   border-radius: 18px;
   background-color: rgba(255, 255, 255, 0.96);
   box-shadow: var(--health-shadow) !important;
-  transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+  transition: border-color 220ms ease, box-shadow 220ms ease, transform 220ms ease;
 }
 
 .card:hover {
-  border-color: rgba(22, 115, 91, 0.18) !important;
+  border-color: rgba(8, 127, 140, 0.2) !important;
+  box-shadow: 0 16px 38px rgba(24, 73, 76, 0.11) !important;
+  transform: translateY(-2px);
 }
 
 .card .card-body {
@@ -211,9 +280,9 @@ body {
 
 .health-navbar {
   min-height: 68px;
-  border-color: rgba(222, 233, 225, 0.9) !important;
-  background: rgba(255, 255, 255, 0.86) !important;
-  box-shadow: 0 4px 22px rgba(29, 69, 52, 0.035);
+  border-color: rgba(218, 233, 231, 0.92) !important;
+  background: rgba(255, 255, 255, 0.9) !important;
+  box-shadow: 0 5px 24px rgba(24, 73, 76, 0.06);
   backdrop-filter: blur(16px);
 }
 
@@ -227,11 +296,11 @@ body {
 }
 
 .health-sidebar {
-  border-color: rgba(222, 233, 225, 0.9) !important;
+  border-color: rgba(218, 233, 231, 0.92) !important;
   background:
-    radial-gradient(circle at 0% 0%, rgba(211, 236, 221, 0.65), transparent 17rem),
-    #fbfdfb !important;
-  box-shadow: 10px 0 32px rgba(24, 61, 47, 0.055) !important;
+    radial-gradient(circle at 0% 0%, rgba(190, 231, 215, 0.76), transparent 18rem),
+    linear-gradient(180deg, #fbfefd, #f4f9f8) !important;
+  box-shadow: 10px 0 32px rgba(24, 73, 76, 0.06) !important;
 }
 
 .health-sidebar > .p-3:first-child {
@@ -241,8 +310,8 @@ body {
 
 .health-sidebar > .p-3:first-child > .d-flex > .rounded-circle {
   border-radius: 14px !important;
-  background: linear-gradient(145deg, #42a786, #104d40) !important;
-  box-shadow: 0 8px 18px rgba(16, 77, 64, 0.2);
+  background: linear-gradient(145deg, #42b9ad, #07545b) !important;
+  box-shadow: 0 8px 18px rgba(7, 84, 91, 0.22);
 }
 
 .health-sidebar .nav {
@@ -253,7 +322,7 @@ body {
   min-height: 44px;
   padding: 0.68rem 0.9rem;
   border: 1px solid transparent;
-  color: #586c62 !important;
+  color: #526e70 !important;
   font-size: 0.91rem;
   font-weight: 550;
   transition: background-color 160ms ease, color 160ms ease, transform 160ms ease;
@@ -261,15 +330,15 @@ body {
 
 .health-nav-link:not(.active):hover {
   color: var(--health-primary-dark) !important;
-  background: #edf5ef !important;
+  background: #e8f5f2 !important;
   transform: translateX(2px);
 }
 
 .health-nav-link.active,
 .health-sidebar .nav-pills .health-nav-link.active {
   color: #fff !important;
-  background: linear-gradient(110deg, #16735b, #238466) !important;
-  box-shadow: 0 6px 15px rgba(22, 115, 91, 0.2);
+  background: linear-gradient(110deg, #087f8c, #20a391) !important;
+  box-shadow: 0 6px 15px rgba(8, 127, 140, 0.23);
 }
 
 .health-sidebar .border-top {
@@ -277,17 +346,17 @@ body {
 }
 
 .health-page-container .alert {
-  border: 1px solid rgba(217, 162, 61, 0.2);
+  border: 1px solid rgba(217, 153, 50, 0.22);
   border-radius: 14px;
 }
 
 .health-page-container .form-control,
 .health-page-container .form-select {
   min-height: 43px;
-  border-color: #dfe9e2;
+  border-color: #dce9e7;
   border-radius: 11px;
   color: var(--health-ink);
-  background-color: #fcfdfc;
+  background-color: #fbfdfd;
 }
 
 .health-page-container textarea.form-control {
@@ -295,14 +364,18 @@ body {
 }
 
 .health-page-container .form-control::placeholder {
-  color: #9aa9a1;
+  color: #8a9e9e;
 }
 
 .health-page-container .form-control:focus,
 .health-page-container .form-select:focus {
-  border-color: #67b99a;
+  border-color: #49b7a8;
   background-color: #fff;
-  box-shadow: 0 0 0 0.22rem rgba(66, 167, 134, 0.14);
+  box-shadow: 0 0 0 0.22rem rgba(44, 166, 157, 0.15);
+}
+
+.health-page-container > .row {
+  animation: health-content-enter 500ms ease-out both;
 }
 
 .health-page-container .btn {
@@ -311,33 +384,37 @@ body {
   transition: transform 150ms ease, box-shadow 150ms ease, background-color 150ms ease;
 }
 
+.health-page-container .btn:not(:disabled):hover {
+  transform: translateY(-1px);
+}
+
 .health-page-container .btn:not(:disabled):active {
   transform: translateY(1px);
 }
 
 .health-page-container .btn-success {
-  --bs-btn-bg: #16735b;
-  --bs-btn-border-color: #16735b;
-  --bs-btn-hover-bg: #104d40;
-  --bs-btn-hover-border-color: #104d40;
-  --bs-btn-active-bg: #104d40;
-  --bs-btn-active-border-color: #104d40;
-  --bs-btn-disabled-bg: #16735b;
-  --bs-btn-disabled-border-color: #16735b;
-  box-shadow: 0 5px 12px rgba(22, 115, 91, 0.12);
+  --bs-btn-bg: #087f8c;
+  --bs-btn-border-color: #087f8c;
+  --bs-btn-hover-bg: #07545b;
+  --bs-btn-hover-border-color: #07545b;
+  --bs-btn-active-bg: #07545b;
+  --bs-btn-active-border-color: #07545b;
+  --bs-btn-disabled-bg: #087f8c;
+  --bs-btn-disabled-border-color: #087f8c;
+  box-shadow: 0 5px 12px rgba(8, 127, 140, 0.13);
 }
 
 .health-page-container .btn-success:hover {
-  box-shadow: 0 7px 17px rgba(22, 115, 91, 0.2);
+  box-shadow: 0 7px 17px rgba(8, 127, 140, 0.22);
 }
 
 .health-page-container .btn-outline-success {
-  --bs-btn-color: #16735b;
-  --bs-btn-border-color: #b6d4c4;
-  --bs-btn-hover-bg: #16735b;
-  --bs-btn-hover-border-color: #16735b;
-  --bs-btn-active-bg: #104d40;
-  --bs-btn-active-border-color: #104d40;
+  --bs-btn-color: #087f8c;
+  --bs-btn-border-color: #acd8d2;
+  --bs-btn-hover-bg: #087f8c;
+  --bs-btn-hover-border-color: #087f8c;
+  --bs-btn-active-bg: #07545b;
+  --bs-btn-active-border-color: #07545b;
 }
 
 .health-page-container .list-group-item {
@@ -345,7 +422,7 @@ body {
 }
 
 .health-page-container .table {
-  --bs-table-hover-bg: #f2f8f4;
+  --bs-table-hover-bg: #eff8f6;
   --bs-table-border-color: var(--health-line);
 }
 
@@ -356,11 +433,11 @@ body {
 }
 
 .health-page-container .bg-success-subtle {
-  background-color: rgba(22, 115, 91, 0.1) !important;
+  background-color: rgba(8, 127, 140, 0.1) !important;
 }
 
 .health-page-container .text-success {
-  color: #16735b !important;
+  color: #087f8c !important;
 }
 
 @media (min-width: 1200px) {
@@ -392,44 +469,55 @@ body {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
   }
+
+  .login-page,
+  .login-layout,
+  .login-illustration,
+  .login-card .rounded-circle,
+  .health-shell,
+  .health-page-container > .row,
+  .health-nav-link.active {
+    animation: none !important;
+  }
 }
 
 .btn-success {
-  --bs-btn-bg: #16735b;
-  --bs-btn-border-color: #16735b;
-  --bs-btn-hover-bg: #104d40;
-  --bs-btn-hover-border-color: #104d40;
-  --bs-btn-active-bg: #104d40;
-  --bs-btn-active-border-color: #104d40;
-  --bs-btn-disabled-bg: #16735b;
-  --bs-btn-disabled-border-color: #16735b;
+  --bs-btn-bg: #087f8c;
+  --bs-btn-border-color: #087f8c;
+  --bs-btn-hover-bg: #07545b;
+  --bs-btn-hover-border-color: #07545b;
+  --bs-btn-active-bg: #07545b;
+  --bs-btn-active-border-color: #07545b;
+  --bs-btn-disabled-bg: #087f8c;
+  --bs-btn-disabled-border-color: #087f8c;
+  background-image: linear-gradient(115deg, #159e91, #08727e);
 }
 
 .btn-outline-success {
-  --bs-btn-color: #16735b;
-  --bs-btn-border-color: #b6d4c4;
-  --bs-btn-hover-bg: #16735b;
-  --bs-btn-hover-border-color: #16735b;
-  --bs-btn-active-bg: #104d40;
-  --bs-btn-active-border-color: #104d40;
+  --bs-btn-color: #087f8c;
+  --bs-btn-border-color: #acd8d2;
+  --bs-btn-hover-bg: #087f8c;
+  --bs-btn-hover-border-color: #087f8c;
+  --bs-btn-active-bg: #07545b;
+  --bs-btn-active-border-color: #07545b;
 }
 
 .form-control:focus,
 .form-select:focus {
-  border-color: #67b99a;
-  box-shadow: 0 0 0 0.2rem rgba(66, 167, 134, 0.14);
+  border-color: #49b7a8;
+  box-shadow: 0 0 0 0.2rem rgba(44, 166, 157, 0.15);
 }
 
 .nav-pills .nav-link.active {
-  background-color: #16735b;
+  background-color: #087f8c;
 }
 
 .bg-success-subtle {
-  background-color: rgba(22, 115, 91, 0.1) !important;
+  background-color: rgba(8, 127, 140, 0.1) !important;
 }
 
 .text-success {
-  color: #16735b !important;
+  color: #087f8c !important;
 }
 
 pre {
@@ -441,7 +529,42 @@ pre {
 }
 
 .sidebar {
-  box-shadow: 10px 0 32px rgba(24, 61, 47, 0.055);
+  box-shadow: 10px 0 32px rgba(24, 73, 76, 0.06);
+}
+
+.health-nav-link.active {
+  background-size: 160% 160% !important;
+  animation: health-active-glow 6s ease-in-out infinite alternate;
+}
+
+@keyframes health-background-drift {
+  from { background-position: 0% 0%; }
+  to { background-position: 100% 100%; }
+}
+
+@keyframes health-card-enter {
+  from { opacity: 0; transform: translateY(14px) scale(0.99); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes health-content-enter {
+  from { opacity: 0; transform: translateY(9px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes health-illustration-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-7px); }
+}
+
+@keyframes health-logo-breathe {
+  0%, 100% { box-shadow: 0 9px 22px rgba(8, 127, 140, 0.2); }
+  50% { box-shadow: 0 11px 28px rgba(8, 127, 140, 0.32); }
+}
+
+@keyframes health-active-glow {
+  from { filter: saturate(0.96); }
+  to { filter: saturate(1.14); }
 }
 
 .app-splash {
@@ -452,7 +575,7 @@ pre {
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  background: linear-gradient(145deg, #f6fbf7 0%, #e4f3e9 52%, #f7fbf8 100%);
+  background: linear-gradient(145deg, #f4fbf9 0%, #dff3ee 52%, #f5f9fc 100%);
   animation: splash-fade-in 350ms ease-out both;
 }
 
@@ -475,14 +598,14 @@ pre {
   border: 1px solid rgba(255, 255, 255, 0.75);
   border-radius: 36px;
   color: #fff;
-  background: linear-gradient(145deg, #40916c, #1b4332);
-  box-shadow: 0 18px 44px rgba(27, 67, 50, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  background: linear-gradient(145deg, #35b7a2, #07545b);
+  box-shadow: 0 18px 44px rgba(7, 84, 91, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.25);
   animation: splash-logo-pulse 1.5s ease-in-out infinite;
 }
 
 .app-splash-title {
   margin: 0;
-  color: #1b4332;
+  color: #07545b;
   font-size: clamp(2rem, 7vw, 2.8rem);
   font-weight: 750;
   letter-spacing: -0.06em;
@@ -490,7 +613,7 @@ pre {
 
 .app-splash-tagline {
   margin: 8px 0 0;
-  color: #527261;
+  color: #527778;
   font-size: 1rem;
   letter-spacing: 0.015em;
 }
@@ -505,7 +628,7 @@ pre {
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: #2d6a4f;
+  background: #159e91;
   animation: splash-dot 900ms ease-in-out infinite;
 }
 

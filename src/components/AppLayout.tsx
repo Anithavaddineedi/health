@@ -18,7 +18,7 @@ import { MedicationReminderRunner } from '@/components/MedicationReminderRunner'
 import { Page } from '@/types';
 
 export function AppLayout() {
-  const { user, loading } = useAuth();
+  const { user, loading, passwordRecovery } = useAuth();
   const [currentPage, setCurrentPage] = useState<Page>('dashboard');
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -31,6 +31,10 @@ export function AppLayout() {
         <div className="spinner-border text-success" style={{ width: '3rem', height: '3rem' }} />
       </div>
     );
+  }
+
+  if (passwordRecovery) {
+    return <LoginPage passwordRecovery />;
   }
 
   if (!user) {

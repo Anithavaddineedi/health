@@ -32,6 +32,17 @@ export interface Translation {
   passwordPlaceholder: string;
   passwordShort: string;
   createAccount: string;
+  forgotPassword: string;
+  sendResetEmail: string;
+  backToSignIn: string;
+  noAccount: string;
+  haveAccount: string;
+  signupEmailSent: string;
+  resetEmailSent: string;
+  newPassword: string;
+  updatePassword: string;
+  passwordUpdated: string;
+  continue: string;
   privacyNotice: string;
   privacyNoticeText: string;
 
@@ -282,6 +293,17 @@ export const translations: Record<Language, Translation> = {
     passwordPlaceholder: 'At least 6 characters',
     passwordShort: 'Password must be at least 6 characters long.',
     createAccount: 'Create Account',
+    forgotPassword: 'Forgot password?',
+    sendResetEmail: 'Send reset link',
+    backToSignIn: 'Back to sign in',
+    noAccount: "Don't have an account?",
+    haveAccount: 'Already have an account?',
+    signupEmailSent: 'Check your email to confirm your account before signing in.',
+    resetEmailSent: 'If an account exists for this email, a password reset link has been sent.',
+    newPassword: 'New password',
+    updatePassword: 'Update password',
+    passwordUpdated: 'Your password has been updated.',
+    continue: 'Continue',
     privacyNotice: 'Privacy Notice:',
     privacyNoticeText: 'Your health data is protected with row-level security. Only you can access your own records.',
     disclaimerTitle: 'Medical Disclaimer:',
@@ -509,6 +531,17 @@ export const translations: Record<Language, Translation> = {
     passwordPlaceholder: 'కనీసం 6 అక్షరాలు',
     passwordShort: 'పాస్‌వర్డ్ కనీసం 6 అక్షరాలు ఉండాలి.',
     createAccount: 'ఖాతా సృష్టించండి',
+    forgotPassword: 'పాస్‌వర్డ్ మర్చిపోయారా?',
+    sendResetEmail: 'రీసెట్ లింక్ పంపండి',
+    backToSignIn: 'సైన్ ఇన్‌కు తిరిగి వెళ్లండి',
+    noAccount: 'ఖాతా లేదా?',
+    haveAccount: 'ఇప్పటికే ఖాతా ఉందా?',
+    signupEmailSent: 'సైన్ ఇన్ చేయడానికి ముందు ఖాతాను నిర్ధారించడానికి మీ ఇమెయిల్ చూడండి.',
+    resetEmailSent: 'ఈ ఇమెయిల్‌కు ఖాతా ఉంటే, పాస్‌వర్డ్ రీసెట్ లింక్ పంపబడింది.',
+    newPassword: 'కొత్త పాస్‌వర్డ్',
+    updatePassword: 'పాస్‌వర్డ్‌ను నవీకరించండి',
+    passwordUpdated: 'మీ పాస్‌వర్డ్ నవీకరించబడింది.',
+    continue: 'కొనసాగించండి',
     privacyNotice: 'గోప్యతా సూచన:',
     privacyNoticeText: 'మీ ఆరోగ్య డేటా రో-లెవల్ సెక్యూరిటీతో రక్షించబడింది. మీరు మాత్రమే మీ రికార్డులను యాక్సెస్ చేయగలరు.',
     disclaimerTitle: 'వైద్య హెచ్చరిక:',
