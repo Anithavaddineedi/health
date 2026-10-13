@@ -50,7 +50,15 @@ export interface AnalysisResult {
 // Common medical test names and their reference ranges
 const TEST_REFERENCE_RANGES: Record<string, { min: number; max: number; unit: string; range: string }> = {
   'hemoglobin': { min: 12, max: 17, unit: 'g/dL', range: '12.0 - 17.0 g/dL' },
+  'haemoglobin': { min: 12, max: 17, unit: 'g/dL', range: '12.0 - 17.0 g/dL' },
+  'hgb': { min: 12, max: 17, unit: 'g/dL', range: '12.0 - 17.0 g/dL' },
+  'hb': { min: 12, max: 17, unit: 'g/dL', range: '12.0 - 17.0 g/dL' },
   'hba1c': { min: 4, max: 5.6, unit: '%', range: '4.0% - 5.6%' },
+  'blood sugar': { min: 70, max: 99, unit: 'mg/dL', range: '70 - 99 mg/dL' },
+  'fasting blood sugar': { min: 70, max: 99, unit: 'mg/dL', range: '70 - 99 mg/dL' },
+  'random blood sugar': { min: 70, max: 99, unit: 'mg/dL', range: '70 - 99 mg/dL' },
+  'fbs': { min: 70, max: 99, unit: 'mg/dL', range: '70 - 99 mg/dL' },
+  'rbs': { min: 70, max: 99, unit: 'mg/dL', range: '70 - 99 mg/dL' },
   'glucose': { min: 70, max: 99, unit: 'mg/dL', range: '70 - 99 mg/dL' },
   'fasting glucose': { min: 70, max: 99, unit: 'mg/dL', range: '70 - 99 mg/dL' },
   'cholesterol': { min: 0, max: 200, unit: 'mg/dL', range: '< 200 mg/dL' },
@@ -216,47 +224,89 @@ function extractMedications(text: string): ParsedMedication[] {
 }
 
 function extractTestValues(text: string): ParsedRecord[] {
-  const records: ParsedRecord[] = [];
+  const records: ParsedRecord[] = extractBloodPressureValues(text);
   const lines = text.split('\n');
 
   for (const line of lines) {
     const lowerLine = line.toLowerCase().trim();
     if (!lowerLine) continue;
 
-    for (const [testName, refRange] of Object.entries(TEST_REFERENCE_RANGES)) {
-      if (lowerLine.includes(testName)) {
-        // Try to extract numeric value
-        const valueMatch = line.match(/(\d+(?:\.\d+)?)\s*(mg\/dl|g\/dl|mmol\/l|miu\/l|ng\/ml|pg\/ml|u\/l|mm\/hr|mg\/l|%|x10\^3\/µl|x10\^6\/µl|x10\^3\/uL|x10\^6\/uL)?/i);
+    const matchedTests = Object.entries(TEST_REFERENCE_RANGES)
+      .filter(([testName]) => testName === 'hb'
+        ? /\bhb\b/.test(lowerLine)
+        : testName === 'fbs' || testName === 'rbs'
+          ? new RegExp(`\\b${testName}\\b`).test(lowerLine)
+          : lowerLine.includes(testName))
+      .sort(([a], [b]) => b.length - a.length);
+    const extractedCategories = new Set<string>();
 
-        if (valueMatch) {
-          const numericValue = parseFloat(valueMatch[1]);
-          const unit = valueMatch[2] || refRange.unit;
-          const isAbnormal = numericValue < refRange.min || numericValue > refRange.max;
+    for (const [testName, refRange] of matchedTests) {
+      const category = /(?:blood sugar|glucose|fbs|rbs)/.test(testName)
+        ? 'blood-sugar'
+        : /^(?:hemoglobin|haemoglobin|hgb|hb)$/.test(testName)
+          ? 'hemoglobin'
+          : testName;
+      if (extractedCategories.has(category)) continue;
+      extractedCategories.add(category);
 
-          const displayName = testName
-            .split(' ')
-            .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-            .join(' ');
+      // Try to extract numeric value
+      const valueMatch = line.match(/(\d+(?:\.\d+)?)\s*(mg\/dl|g\/dl|mmol\/l|miu\/l|ng\/ml|pg\/ml|u\/l|mm\/hr|mg\/l|%|x10\^3\/µl|x10\^6\/µl|x10\^3\/uL|x10\^6\/uL)?/i);
 
-          records.push({
-            record_type: 'observation',
-            fhir_resource_type: 'Observation',
-            code: testName,
-            display_name: displayName,
-            value: valueMatch[1],
-            unit,
-            reference_range: refRange.range,
-            status: isAbnormal ? 'abnormal' : 'normal',
-            is_abnormal: isAbnormal,
-            notes: isAbnormal
-              ? `Value ${valueMatch[1]} ${unit} is outside the reference range of ${refRange.range}`
-              : `Value is within normal range`,
-          });
-        }
+      if (valueMatch) {
+        const numericValue = parseFloat(valueMatch[1]);
+        const unit = valueMatch[2] || refRange.unit;
+        const isAbnormal = numericValue < refRange.min || numericValue > refRange.max;
+
+        const displayName = category === 'hemoglobin'
+          ? 'Hemoglobin'
+          : category === 'blood-sugar'
+            ? 'Blood Sugar'
+            : testName
+              .split(' ')
+              .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+              .join(' ');
+
+        records.push({
+          record_type: 'observation',
+          fhir_resource_type: 'Observation',
+          code: category,
+          display_name: displayName,
+          value: valueMatch[1],
+          unit,
+          reference_range: refRange.range,
+          status: isAbnormal ? 'abnormal' : 'normal',
+          is_abnormal: isAbnormal,
+          notes: isAbnormal
+            ? `Value ${valueMatch[1]} ${unit} is outside the reference range of ${refRange.range}`
+            : 'Value is within normal range',
+        });
       }
     }
   }
 
+  return records;
+}
+
+function extractBloodPressureValues(text: string): ParsedRecord[] {
+  const records: ParsedRecord[] = [];
+  for (const line of text.split('\n')) {
+    if (!/\b(?:blood pressure|bp|systolic|diastolic)\b/i.test(line)) continue;
+    const pressure = line.match(/\b(\d{2,3})\s*\/\s*(\d{2,3})\b/);
+    if (!pressure) continue;
+
+    records.push({
+      record_type: 'observation',
+      fhir_resource_type: 'Observation',
+      code: 'blood-pressure',
+      display_name: 'Blood Pressure',
+      value: `${pressure[1]}/${pressure[2]}`,
+      unit: 'mmHg',
+      reference_range: '',
+      status: 'recorded',
+      is_abnormal: false,
+      notes: 'Blood pressure reading extracted from the uploaded document',
+    });
+  }
   return records;
 }
 

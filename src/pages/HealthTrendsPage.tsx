@@ -166,9 +166,10 @@ function CustomTooltip({
 export function HealthTrendsPage() {
   const { user } = useAuth();
   const [readings, setReadings] = useState<HealthReading[]>([]);
-  const [range, setRange] = useState<Range>('7');
+  const [range, setRange] = useState<Range>('all');
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
+  const [realtimeError, setRealtimeError] = useState('');
 
   const loadReadings = useCallback(async () => {
     if (!user) return;
@@ -191,7 +192,7 @@ export function HealthTrendsPage() {
     void loadReadings();
   }, [loadReadings]);
 
-  useUserRealtime(user?.id, ['medical_records'], loadReadings, setErrorMessage);
+  useUserRealtime(user?.id, ['medical_records'], loadReadings, setRealtimeError, () => setRealtimeError(''));
 
   const chartData = useMemo(() => {
     const today = new Date();
@@ -272,6 +273,7 @@ export function HealthTrendsPage() {
       </div>
 
       {errorMessage && <div className="alert alert-danger" role="alert">{errorMessage}</div>}
+      {realtimeError && <div className="alert alert-warning" role="alert">{realtimeError}</div>}
 
       <div className="card border-0 shadow-sm">
         <div className="card-body p-3 p-md-4">
@@ -394,7 +396,8 @@ export function HealthTrendsPage() {
               <div className="small text-muted mt-2">
                 Blood pressure charts the systolic value; tooltips retain the full reading when available.
                 When a date has multiple readings for the same metric, the latest saved reading is plotted.
-                Records without a clinical date use their saved date.
+                Records without a clinical date use their saved date. Increase or decrease trends become visible
+                when readings are available from multiple dates.
               </div>
             </>
           )}

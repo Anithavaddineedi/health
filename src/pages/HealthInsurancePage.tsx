@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { ExternalLink, HeartPulse, ShieldCheck } from 'lucide-react';
+import { Check, ExternalLink, HeartPulse, Save, ShieldCheck } from 'lucide-react';
 import { supabase } from '@/lib/supabaseClient';
 import { useAuth } from '@/context/AuthContext';
 
@@ -28,7 +28,7 @@ type InsuranceOption = {
   verifiedProduct?: boolean;
 };
 
-const options: InsuranceOption[] = [
+const fallbackOptions: InsuranceOption[] = [
   {
     type: 'individual',
     name: 'Individual Health Insurance',
@@ -36,10 +36,10 @@ const options: InsuranceOption[] = [
     verifiedCoverMin: null,
     verifiedCoverMax: null,
     annualPremium: null,
-    benefits: 'An individual policy covers eligible expenses for the insured person, as defined in its policy wording.',
-    eligibility: 'Entry age, medical screening, and acceptance are insurer- and product-specific.',
-    waitingPeriod: 'Not standardized. Check initial, pre-existing-condition, and specified-treatment waits in the policy wording.',
-    exclusions: 'Exclusions and sub-limits vary by policy. Review the current policy wording before buying.',
+    benefits: 'Covers eligible expenses for the insured person as defined in the policy wording.',
+    eligibility: 'Entry age, medical screening, and acceptance vary by insurer and product.',
+    waitingPeriod: 'Check the policy for initial, pre-existing-condition, and specified-treatment waiting periods.',
+    exclusions: 'Exclusions and sub-limits vary. Review the current policy wording before buying.',
     provider: 'Star Health Insurance',
     sourceUrl: 'https://www.starhealth.in/health-insurance/',
     sourceLabel: 'Health insurance guide',
@@ -47,14 +47,14 @@ const options: InsuranceOption[] = [
   {
     type: 'family',
     name: 'Family Floater',
-    coverage: 'A shared sum insured; amount and covered members depend on the policy.',
+    coverage: 'A shared sum insured; covered members depend on the policy.',
     verifiedCoverMin: null,
     verifiedCoverMax: null,
     annualPremium: null,
-    benefits: 'A single shared cover can apply to insured family members, subject to the selected policy terms.',
-    eligibility: 'Permitted relationships, member ages, and maximum members vary by insurer and product.',
-    waitingPeriod: 'Policy- and condition-specific. Check the schedule and policy wording for every insured member.',
-    exclusions: 'Exclusions, co-payments, and sub-limits vary by policy. Review the current policy wording.',
+    benefits: 'A shared cover can apply to insured family members, subject to the selected policy terms.',
+    eligibility: 'Permitted relationships, member ages, and maximum members vary by product.',
+    waitingPeriod: 'Policy- and condition-specific. Check the terms for every insured member.',
+    exclusions: 'Exclusions, co-payments, and sub-limits vary by policy.',
     provider: 'HDFC ERGO',
     sourceUrl: 'https://www.hdfcergo.com/health-insurance',
     sourceLabel: 'Health insurance products',
@@ -66,10 +66,10 @@ const options: InsuranceOption[] = [
     verifiedCoverMin: null,
     verifiedCoverMax: null,
     annualPremium: null,
-    benefits: 'Health cover designed for older adults; covered treatments and cost-sharing depend on the policy.',
-    eligibility: 'Senior entry-age definition and medical assessment are set by each insurer. Confirm directly.',
-    waitingPeriod: 'Check the selected policy for initial, pre-existing-condition, and procedure-specific waits.',
-    exclusions: 'Check exclusions, co-payments, room limits, and disease sub-limits in the selected policy wording.',
+    benefits: 'Health cover designed for older adults; covered treatments depend on the policy.',
+    eligibility: 'Senior entry-age definitions and medical assessment vary by insurer.',
+    waitingPeriod: 'Check the policy for initial, pre-existing-condition, and procedure-specific waits.',
+    exclusions: 'Check exclusions, co-payments, room limits, and disease sub-limits.',
     provider: 'Star Health Insurance',
     sourceUrl: 'https://www.starhealth.in/health-insurance/',
     sourceLabel: 'Health insurance guide',
@@ -77,14 +77,14 @@ const options: InsuranceOption[] = [
   {
     type: 'critical',
     name: 'Critical Illness Cover',
-    coverage: 'Star Critical Illness Multipay: ₹5 lakh–₹25 lakh sum insured, in ₹1 lakh multiples.',
+    coverage: 'Star Critical Illness Multipay: ₹5 lakh–₹25 lakh sum insured.',
     verifiedCoverMin: 500000,
     verifiedCoverMax: 2500000,
     annualPremium: null,
-    benefits: 'The named policy page describes a lump-sum payout for a listed covered diagnosis, lists 37 illnesses, and describes multipay conditions. It is not a substitute for hospitalization cover.',
-    eligibility: 'The product page states entry ages 18–65. Its screening information and other conditions must be checked with the insurer.',
-    waitingPeriod: 'The product page states a 90-day wait before the first covered major-disease diagnosis, a 15-day survival period, and a 12-month wait between covered conditions.',
-    exclusions: 'The covered diagnosis definitions, exclusions, claim limits, and remaining conditions are in the policy wording. Check it before buying.',
+    benefits: 'The linked product describes a lump-sum payout for listed diagnoses. It is not a substitute for hospitalization cover.',
+    eligibility: 'The product page states entry ages 18–65; confirm screening and other requirements with the insurer.',
+    waitingPeriod: 'The product page states a 90-day initial wait, a 15-day survival period, and a 12-month wait between covered conditions.',
+    exclusions: 'Check covered diagnosis definitions, exclusions, claim limits, and policy wording.',
     provider: 'Star Health Insurance',
     sourceUrl: 'https://www.starhealth.in/health-insurance/critical-illness-insurance/',
     sourceLabel: 'Star Critical Illness Multipay product information',
@@ -93,14 +93,14 @@ const options: InsuranceOption[] = [
   {
     type: 'government',
     name: 'Government Health Schemes',
-    coverage: 'Eligibility, covered services, and benefit limits vary by scheme, state, and beneficiary category.',
+    coverage: 'Eligibility, covered services, and benefit limits vary by scheme and state.',
     verifiedCoverMin: null,
     verifiedCoverMax: null,
     annualPremium: null,
-    benefits: 'Potential access to scheme-defined benefits for eligible beneficiaries. Verify the currently applicable scheme and package details on the official portal.',
-    eligibility: 'Scheme-specific; check eligibility using the official beneficiary portal or relevant state authority.',
-    waitingPeriod: 'Scheme-specific. Confirm covered services and applicable conditions with the official scheme.',
-    exclusions: 'Scheme rules, listed packages, and exclusions apply; confirm the current rules with the official scheme.',
+    benefits: 'Eligible beneficiaries may access scheme-defined benefits. Verify current details on the official portal.',
+    eligibility: 'Scheme-specific; verify eligibility using the official beneficiary portal.',
+    waitingPeriod: 'Scheme-specific. Confirm applicable rules with the official scheme.',
+    exclusions: 'Scheme rules, listed packages, and exclusions apply.',
     provider: 'National Health Authority (PM-JAY Beneficiary Portal)',
     sourceUrl: 'https://beneficiary.nha.gov.in/',
     sourceLabel: 'Official beneficiary portal',
@@ -108,14 +108,14 @@ const options: InsuranceOption[] = [
   {
     type: 'topup',
     name: 'Top-up Plans',
-    coverage: 'Additional cover above a deductible; the deductible and cover limit are policy-specific.',
+    coverage: 'Additional cover above a deductible; limits depend on the policy.',
     verifiedCoverMin: null,
     verifiedCoverMax: null,
     annualPremium: null,
-    benefits: 'Can supplement a base policy after eligible expenses cross the plan deductible. Confirm how the deductible applies to claims.',
-    eligibility: 'Availability, entry age, and whether a base policy is required depend on the product.',
-    waitingPeriod: 'Product- and condition-specific. Check the policy schedule and wording.',
-    exclusions: 'Deductible, exclusions, and sub-limits vary. Confirm how this coordinates with your existing insurance.',
+    benefits: 'Can supplement a base policy after eligible expenses cross the plan deductible.',
+    eligibility: 'Availability, entry age, and base-policy requirements vary by product.',
+    waitingPeriod: 'Product- and condition-specific. Check the policy schedule.',
+    exclusions: 'Deductible, exclusions, and sub-limits vary.',
     provider: 'Star Health Insurance',
     sourceUrl: 'https://www.starhealth.in/health-insurance/',
     sourceLabel: 'Health insurance guide',
@@ -145,35 +145,121 @@ function isCriticalAgeEligible(age: number | null) {
   return age !== null && age >= 18 && age <= 65;
 }
 
+interface SavedInsurancePreferences {
+  age: number | null;
+  budget: number | null;
+  minimum_cover: number | null;
+  insurance_type: InsuranceType | 'all';
+}
+
+function readLocalPreferences(userId: string): SavedInsurancePreferences | null {
+  const saved = localStorage.getItem(`insurance-preferences:${userId}`);
+  if (!saved) return null;
+  try {
+    const value: unknown = JSON.parse(saved);
+    if (typeof value !== 'object' || value === null) return null;
+    const preferences = value as Partial<SavedInsurancePreferences>;
+    const validTypes: Array<InsuranceType | 'all'> = ['all', ...Object.keys(typeLabels) as InsuranceType[]];
+    if (preferences.insurance_type && !validTypes.includes(preferences.insurance_type)) return null;
+    return {
+      age: typeof preferences.age === 'number' ? preferences.age : null,
+      budget: typeof preferences.budget === 'number' ? preferences.budget : null,
+      minimum_cover: typeof preferences.minimum_cover === 'number' ? preferences.minimum_cover : null,
+      insurance_type: preferences.insurance_type || 'all',
+    };
+  } catch {
+    return null;
+  }
+}
+
 export function HealthInsurancePage() {
   const { user } = useAuth();
+  const [options, setOptions] = useState<InsuranceOption[]>([]);
   const [age, setAge] = useState<number | ''>('');
   const [profileConditions, setProfileConditions] = useState<string[]>([]);
   const [profileLoaded, setProfileLoaded] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [usingLocalFallback, setUsingLocalFallback] = useState(false);
   const [selectedType, setSelectedType] = useState<InsuranceType | 'all'>('all');
   const [budget, setBudget] = useState<number | ''>('');
   const [minimumCover, setMinimumCover] = useState<number | ''>('');
 
   const loadProfile = useCallback(async () => {
-    if (!user) return;
+    if (!user) {
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
     setErrorMessage('');
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('date_of_birth, chronic_conditions')
-      .eq('id', user.id)
-      .maybeSingle();
+    const [profileResult, optionsResult, preferencesResult] = await Promise.all([
+      supabase
+        .from('profiles')
+        .select('date_of_birth, chronic_conditions')
+        .eq('id', user.id)
+        .maybeSingle(),
+      supabase.from('insurance_options').select('*').order('type'),
+      supabase
+        .from('insurance_preferences')
+        .select('age, budget, minimum_cover, insurance_type')
+        .eq('user_id', user.id)
+        .maybeSingle(),
+    ]);
 
-    if (error) {
-      setErrorMessage(error.message);
+    if (profileResult.error) {
+      setErrorMessage(profileResult.error.message);
     } else {
+      const profileAge = profileResult.data?.date_of_birth
+        ? calculateAge(profileResult.data.date_of_birth)
+        : null;
       setProfileLoaded(true);
-      if (data?.date_of_birth) {
-        const profileAge = calculateAge(data.date_of_birth);
-        if (profileAge !== null) setAge(profileAge);
+      setProfileConditions(profileResult.data?.chronic_conditions || []);
+      const localPreferences = readLocalPreferences(user.id);
+      setAge(localPreferences?.age ?? profileAge ?? '');
+      setBudget(localPreferences?.budget ?? '');
+      setMinimumCover(localPreferences?.minimum_cover ?? '');
+      setSelectedType(localPreferences?.insurance_type ?? 'all');
+    }
+
+    if (optionsResult.error) {
+      if (optionsResult.error.code === 'PGRST205' || /insurance_options.*schema cache/i.test(optionsResult.error.message)) {
+        setOptions(fallbackOptions);
+        setUsingLocalFallback(true);
+      } else {
+        setErrorMessage(optionsResult.error.message);
       }
-      setProfileConditions(data?.chronic_conditions || []);
+    } else {
+      setOptions((optionsResult.data || []).map((option) => ({
+        type: option.type as InsuranceType,
+        name: option.name,
+        coverage: option.coverage,
+        verifiedCoverMin: option.verified_cover_min,
+        verifiedCoverMax: option.verified_cover_max,
+        annualPremium: option.annual_premium,
+        benefits: option.benefits,
+        eligibility: option.eligibility,
+        waitingPeriod: option.waiting_period,
+        exclusions: option.exclusions,
+        provider: option.provider,
+        sourceUrl: option.source_url,
+        sourceLabel: option.source_label,
+        verifiedProduct: option.verified_product,
+      })));
+    }
+
+    if (preferencesResult.error) {
+      if (preferencesResult.error.code === 'PGRST205' || /insurance_preferences.*schema cache/i.test(preferencesResult.error.message)) {
+        setUsingLocalFallback(true);
+      } else {
+        setErrorMessage((current) => current || preferencesResult.error.message);
+      }
+    } else if (preferencesResult.data) {
+      setAge(preferencesResult.data.age ?? '');
+      setBudget(preferencesResult.data.budget ?? '');
+      setMinimumCover(preferencesResult.data.minimum_cover ?? '');
+      setSelectedType((preferencesResult.data.insurance_type as InsuranceType | 'all') || 'all');
     }
     setLoading(false);
   }, [user]);
@@ -181,6 +267,37 @@ export function HealthInsurancePage() {
   useEffect(() => {
     void loadProfile();
   }, [loadProfile]);
+
+  const savePreferences = async () => {
+    if (!user) return;
+    setSaving(true);
+    setSaved(false);
+    setErrorMessage('');
+    const preferences: SavedInsurancePreferences = {
+      age: age === '' ? null : age,
+      budget: budget === '' ? null : budget,
+      minimum_cover: minimumCover === '' ? null : minimumCover,
+      insurance_type: selectedType,
+    };
+    const { error } = await supabase.from('insurance_preferences').upsert(
+      { ...preferences, user_id: user.id },
+      { onConflict: 'user_id' }
+    );
+    setSaving(false);
+    if (error) {
+      if (error.code === 'PGRST205' || /insurance_preferences.*schema cache/i.test(error.message)) {
+        localStorage.setItem(`insurance-preferences:${user.id}`, JSON.stringify(preferences));
+        setUsingLocalFallback(true);
+        setSaved(true);
+        return;
+      }
+      setErrorMessage(error.message);
+      return;
+    }
+    localStorage.removeItem(`insurance-preferences:${user.id}`);
+    setUsingLocalFallback(false);
+    setSaved(true);
+  };
 
   const numericAge = age === '' ? null : age;
   const filteredOptions = useMemo(() => options.filter((option) => {
@@ -192,7 +309,7 @@ export function HealthInsurancePage() {
       (option.verifiedCoverMax === null || option.verifiedCoverMax < minimumCover)
     ) return false;
     return true;
-  }), [budget, minimumCover, numericAge, selectedType]);
+  }), [budget, minimumCover, numericAge, options, selectedType]);
 
   const recommendationMessages = useMemo(() => {
     const messages: string[] = [];
@@ -212,9 +329,12 @@ export function HealthInsurancePage() {
       messages.push('No chronic conditions are listed in your saved profile. This is not a substitute for a complete health disclosure to an insurer.');
     }
 
-    messages.push('Your profile does not include household members or an insurance budget; compare individual and family options based on the people you intend to insure.');
+    messages.push('Your profile does not include household members; compare individual and family options based on the people you intend to insure.');
+    if (budget === '') {
+      messages.push('Set a maximum annual premium to filter options when verified premium information becomes available.');
+    }
     return messages;
-  }, [numericAge, profileConditions, profileLoaded]);
+  }, [budget, numericAge, profileConditions, profileLoaded]);
 
   if (loading) {
     return (
@@ -236,6 +356,11 @@ export function HealthInsurancePage() {
       </div>
 
       {errorMessage && <div className="alert alert-danger" role="alert">{errorMessage}</div>}
+      {usingLocalFallback && (
+        <div className="small text-muted mb-3" role="status">
+          Showing the built-in insurance catalog. Saved filters stay in this browser until Supabase sync is available.
+        </div>
+      )}
 
       <div className="alert alert-warning border-0 shadow-sm" role="note">
         <strong>Important:</strong> Premiums are personalized and are not shown as estimates here because no comparable, verified quotes are available. Coverage, waiting periods, exclusions, and eligibility depend on the current policy wording and insurer assessment. Recommendations are informational only; they do not guarantee policy issuance, approval, or claim acceptance.
@@ -255,7 +380,13 @@ export function HealthInsurancePage() {
 
       <div className="card border-0 shadow-sm mb-4">
         <div className="card-body">
-          <h5 className="fw-bold mb-3" style={{ color: '#1b4332' }}>Filter options</h5>
+          <div className="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+            <h5 className="fw-bold mb-0" style={{ color: '#1b4332' }}>Filter options</h5>
+            <button className="btn btn-outline-success btn-sm" type="button" onClick={() => void savePreferences()} disabled={saving}>
+              {saved ? <Check size={15} className="me-1" /> : <Save size={15} className="me-1" />}
+              {saving ? 'Saving…' : saved ? 'Preferences saved' : 'Save preferences'}
+            </button>
+          </div>
           <div className="row g-3">
             <div className="col-12 col-md-6 col-xl-3">
               <label className="form-label small fw-semibold" htmlFor="insurance-age">Age of person to insure (years)</label>
@@ -271,6 +402,7 @@ export function HealthInsurancePage() {
                 onChange={(event) => {
                   const value = event.target.value;
                   setAge(value === '' ? '' : Math.floor(Math.min(120, Math.max(0, Number(value)))));
+                  setSaved(false);
                 }}
               />
               <small className="text-muted">Prefilled from your saved date of birth when available; change it for another person.</small>
@@ -285,7 +417,10 @@ export function HealthInsurancePage() {
                 step="1000"
                 value={budget}
                 placeholder="Any budget"
-                onChange={(event) => setBudget(event.target.value === '' ? '' : Math.max(0, Number(event.target.value)))}
+                onChange={(event) => {
+                  setBudget(event.target.value === '' ? '' : Math.max(0, Number(event.target.value)));
+                  setSaved(false);
+                }}
               />
               <small className="text-muted">Options without a verified quote cannot match this filter.</small>
             </div>
@@ -295,7 +430,10 @@ export function HealthInsurancePage() {
                 className="form-select"
                 id="insurance-coverage"
                 value={minimumCover}
-                onChange={(event) => setMinimumCover(event.target.value === '' ? '' : Number(event.target.value))}
+                onChange={(event) => {
+                  setMinimumCover(event.target.value === '' ? '' : Number(event.target.value));
+                  setSaved(false);
+                }}
               >
                 <option value="">Any cover</option>
                 <option value="500000">₹5 lakh</option>
@@ -312,7 +450,10 @@ export function HealthInsurancePage() {
                 className="form-select"
                 id="insurance-type"
                 value={selectedType}
-                onChange={(event) => setSelectedType(event.target.value as InsuranceType | 'all')}
+                onChange={(event) => {
+                  setSelectedType(event.target.value as InsuranceType | 'all');
+                  setSaved(false);
+                }}
               >
                 <option value="all">All types</option>
                 {Object.entries(typeLabels).map(([value, label]) => (

@@ -5,7 +5,8 @@ export function useUserRealtime(
   userId: string | undefined,
   tables: string[],
   onChange: () => void,
-  onError: (message: string) => void
+  onError: (message: string) => void,
+  onSubscribed?: () => void
 ) {
   const tableNames = tables.join(',');
 
@@ -21,9 +22,11 @@ export function useUserRealtime(
       );
     }
     channel.subscribe((status, error) => {
-      if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
+      if (status === 'SUBSCRIBED') {
+        onSubscribed?.();
+      } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
         onError(
-          `Live updates are unavailable (${error?.message || status}). Apply the latest Supabase migrations and enable Realtime for the health tables.`
+          `Live updates are unavailable (${error?.message || status}). Confirm the latest Supabase migrations are applied and the health tables are enabled in the supabase_realtime publication.`
         );
       }
     });
@@ -31,5 +34,5 @@ export function useUserRealtime(
     return () => {
       void supabase.removeChannel(channel);
     };
-  }, [userId, tableNames, onChange, onError]);
+  }, [userId, tableNames, onChange, onError, onSubscribed]);
 }
